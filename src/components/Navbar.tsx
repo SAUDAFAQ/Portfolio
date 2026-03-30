@@ -4,6 +4,7 @@ import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import "./styles/Navbar.css";
+import { profile } from "../data/portfolio";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 export let smoother: ScrollSmoother;
@@ -23,15 +24,15 @@ const Navbar = () => {
     smoother.scrollTop(0);
     smoother.paused(true);
 
-    let links = document.querySelectorAll(".header ul a");
-    links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
-      element.addEventListener("click", (e) => {
+    const links = document.querySelectorAll(".header ul a");
+    links.forEach((link) => {
+      const anchor = link as HTMLAnchorElement;
+      anchor.addEventListener("click", (e) => {
         if (window.innerWidth > 1024) {
           e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
+          const target = e.currentTarget as HTMLAnchorElement;
+          const section = target.getAttribute("data-href");
+          if (section) smoother.scrollTo(section, true, "top top");
         }
       });
     });
@@ -43,21 +44,31 @@ const Navbar = () => {
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
-          AM
+          {profile.initials}
         </a>
-        <a
-          href="https://www.linkedin.com/in/akashrmalhotra/"
+        {/* <a
+          href={profile.linkedinUrl}
           className="navbar-connect"
           data-cursor="disable"
           target="_blank"
           rel="noreferrer"
         >
-          linkedin.com/in/akashrmalhotra
-        </a>
+          LinkedIn profile
+        </a> */}
         <ul>
           <li>
             <a data-href="#about" href="#about">
               <HoverLinks text="ABOUT" />
+            </a>
+          </li>
+          {/* <li>
+            <a data-href="#services" href="#services">
+              <HoverLinks text="Services" />
+            </a>
+          </li> */}
+          <li>
+            <a data-href="#career" href="#career">
+              <HoverLinks text="CAREER" />
             </a>
           </li>
           <li>
@@ -65,6 +76,11 @@ const Navbar = () => {
               <HoverLinks text="WORK" />
             </a>
           </li>
+          {/* <li>
+            <a data-href="#tech" href="#tech">
+              <HoverLinks text="Tech" />
+            </a>
+          </li> */}
           <li>
             <a data-href="#contact" href="#contact">
               <HoverLinks text="CONTACT" />

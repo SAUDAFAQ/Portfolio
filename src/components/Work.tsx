@@ -1,42 +1,30 @@
-import { useState, useCallback } from "react";
+import {
+  useState,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import "./styles/Work.css";
 import WorkImage from "./WorkImage";
 import { MdArrowBack, MdArrowForward } from "react-icons/md";
-
-const projects = [
-  {
-    title: "CallHQ",
-    category: "Voice AI Calling Platform",
-    tools: "Voice AI, Calling Automation, CRM Integrations",
-    image: "/images/callhq.png",
-    link: "https://callhq.ai",
-  },
-  {
-    title: "Whatsapp Automation",
-    category: "WABA Application",
-    tools: "WhatsApp Business API, Workflow Automation, Notifications",
-    image: "/images/whatsapp.png",
-    link: "https://whatsapp.callhq.ai",
-  },
-  {
-    title: "Broki",
-    category: "Real Estate Platform for FnB Industry",
-    tools: "Property Discovery, Lead Management, Marketplace Workflows",
-    image: "/images/broki.png",
-    link: "https://broki.in",
-  },
-  {
-    title: "Orrdr.com",
-    category: "Ecommerce Platform and Mobile App",
-    tools: "Ecommerce, Mobile Experience, Order Management",
-    image: "/images/orrdr.png",
-    link: "https://orrdr.com",
-  },
-];
+import { projects } from "../data/portfolio";
+import { scrollToSection } from "../utils/scrollToSection";
 
 const Work = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const measure = () => setViewportWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -64,11 +52,10 @@ const Work = () => {
     <div className="work-section" id="work">
       <div className="work-container section-container">
         <h2>
-          My <span>Work</span>
+          Selected <span>work</span>
         </h2>
 
         <div className="carousel-wrapper">
-          {/* Navigation Arrows */}
           <button
             className="carousel-arrow carousel-arrow-left"
             onClick={goToPrev}
@@ -86,16 +73,26 @@ const Work = () => {
             <MdArrowForward />
           </button>
 
-          {/* Slides */}
-          <div className="carousel-track-container">
+          <div className="carousel-track-container" ref={viewportRef}>
             <div
               className="carousel-track"
               style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
+                transform:
+                  viewportWidth > 0
+                    ? `translateX(-${currentIndex * viewportWidth}px)`
+                    : undefined,
               }}
             >
               {projects.map((project, index) => (
-                <div className="carousel-slide" key={index}>
+                <div
+                  className="carousel-slide"
+                  key={project.title}
+                  style={
+                    viewportWidth > 0
+                      ? { flex: `0 0 ${viewportWidth}px` }
+                      : undefined
+                  }
+                >
                   <div className="carousel-content">
                     <div className="carousel-info">
                       <div className="carousel-number">
@@ -103,12 +100,37 @@ const Work = () => {
                       </div>
                       <div className="carousel-details">
                         <h4>{project.title}</h4>
-                        <p className="carousel-category">
-                          {project.category}
-                        </p>
+                        <p className="carousel-category">{project.category}</p>
                         <div className="carousel-tools">
-                          <span className="tools-label">Tools & Features</span>
-                          <p>{project.tools}</p>
+                          <span className="tools-label">Stack</span>
+                          <p>{project.stack}</p>
+                        </div>
+                        <ul className="carousel-bullets">
+                          {project.bullets.map((b, i) => (
+                            <li key={`${project.title}-b-${i}`}>{b}</li>
+                          ))}
+                        </ul>
+                        <div className="carousel-cta">
+                          {project.link ? (
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="carousel-cta-link"
+                              data-cursor="disable"
+                            >
+                              {project.ctaLabel ?? "View project"}
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              className="carousel-cta-link carousel-cta-button"
+                              data-cursor="disable"
+                              onClick={(e) => scrollToSection("#contact", e)}
+                            >
+                              {project.ctaLabel ?? "Contact me"}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -116,7 +138,7 @@ const Work = () => {
                       <WorkImage
                         image={project.image}
                         alt={project.title}
-                        link={project.link}
+                        link={project.link ?? undefined}
                       />
                     </div>
                   </div>
@@ -125,11 +147,10 @@ const Work = () => {
             </div>
           </div>
 
-          {/* Dot Indicators */}
           <div className="carousel-dots">
             {projects.map((_, index) => (
               <button
-                key={index}
+                key={`work-dot-${index}`}
                 className={`carousel-dot ${index === currentIndex ? "carousel-dot-active" : ""
                   }`}
                 onClick={() => goToSlide(index)}

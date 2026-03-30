@@ -85,6 +85,15 @@ body {
   position: relative;
 }
 
+/* Hero copy lives in #smooth-wrapper; ScrollSmoother uses transform, so this is its own
+   stacking context. It must sit above .character-model (z-index 11) or text stays under the canvas. */
+@media screen and (min-width: 1025px) {
+  #smooth-wrapper {
+    position: relative;
+    z-index: 12;
+  }
+}
+
 .container1 {
   width: var(--cWidth);
   height: var(--vh);
@@ -111,6 +120,12 @@ body {
   margin: auto;
   margin-top: 50px;
   margin-bottom: -100px;
+}
+
+.techstack .tech-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .techstack h2 {

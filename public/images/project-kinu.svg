@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#0a0e17"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g)" rx="12"/>
+  <text x="48" y="92" fill="#eae5ec" font-family="system-ui,sans-serif" font-size="28" font-weight="600">Kinu Health</text>
+  <text x="48" y="132" fill="#99f6e4" font-family="system-ui,sans-serif" font-size="16">Health · Flutter · Firebase</text>
+</svg>
